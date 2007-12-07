@@ -11,8 +11,8 @@ import java.util.Iterator;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.taobao.common.cs.common.UniqId;
 import com.taobao.common.store.journal.JournalStore;
+import com.taobao.common.store.util.UniqId;
 
 public class JournalStoreTest {
     JournalStore store = null;
@@ -21,8 +21,8 @@ public class JournalStoreTest {
 
     @Before
     public void setUp() throws Exception {
-        String path = "/temp/notify-store-test";
-        (new File(path)).createNewFile();
+        String path = "/tmp/journalStore-test";
+        if (!(new File(path).exists())) (new File(path)).mkdirs();
         this.store = new JournalStore(path, "testStore");
         this.key = UniqId.getInstance().getUniqIDHash();
         Iterator<byte[]> it = this.store.iterator();

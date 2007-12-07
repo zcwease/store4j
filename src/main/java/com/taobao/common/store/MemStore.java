@@ -8,8 +8,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.taobao.common.cs.common.BytesKey;
-
 /**
  * @author dogun
  *

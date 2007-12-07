@@ -17,9 +17,9 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.log4j.Logger;
 
-import com.taobao.common.cs.common.BytesKey;
-import com.taobao.common.cs.common.Util;
+import com.taobao.common.store.BytesKey;
 import com.taobao.common.store.Store;
+import com.taobao.common.store.util.Util;
 
 /**
  * key±ØÐëÊÇ16×Ö½Ú
