@@ -27,8 +27,7 @@ import java.util.Iterator;
  * <p>简单的存储，对byte[]类型的key value对支持，
  * 仅支持add remove update三种数据操作</p>
  * 
- * @author dogun<yuexuqiang at gmail.com>
- * @version $Rev: 4 $, $Date: 2007-12-07 22:03:00 +0800 $
+ * @author dogun (yuexuqiang at gmail.com)
  */
 public interface Store {
 	/**
@@ -50,7 +49,7 @@ public interface Store {
 	/**
 	 * 获取一个数据
 	 * @param key
-	 * @return
+	 * @return 获得的数据，如果没有，返回null
 	 * @throws IOException
 	 */
 	byte[] get(byte[] key) throws IOException;
@@ -66,20 +65,20 @@ public interface Store {
 	
 	/**
 	 * 获取数据个数
-	 * @return
+	 * @return 数据个数
 	 * @throws IOException
 	 */
 	int size() throws IOException;
 	
 	/**
 	 * 遍历key
-	 * @return
+	 * @return key的遍历器
 	 * @throws IOException
 	 */
 	Iterator<byte[]> iterator() throws IOException;
 	
 	/**
-	 * 關閉
+	 * 关闭存储
 	 * @throws IOException
 	 */
 	void close() throws IOException;

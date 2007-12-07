@@ -1,3 +1,22 @@
+/*
+ *  Licensed to the Apache Software Foundation (ASF) under one
+ *  or more contributor license agreements.  See the NOTICE file
+ *  distributed with this work for additional information
+ *  regarding copyright ownership.  The ASF licenses this file
+ *  to you under the Apache License, Version 2.0 (the
+ *  "License"); you may not use this file except in compliance
+ *  with the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ *
+ */
 package com.taobao.common.store.util;
 
 import java.io.IOException;
@@ -12,7 +31,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.log4j.Logger;
 
 /**
- * @author huangshang
+ * 可以生成唯一的ID，16个字节，128位。同时提供了一些工具方法。
+ * 
+ * @author huangshang (yuexuqiang at gmail.com)
  *
  */
 public class UniqId {
@@ -65,7 +86,7 @@ public class UniqId {
     
     /**
      * 获得不会重复的毫秒数
-     * @return
+     * @return 不会重复的时间
      */
     public long getUniqTime() {
     	return timer.getCurrentTime();
@@ -108,7 +129,7 @@ public class UniqId {
     
     /**
      * 获取MD5之后的uniqId
-     * @return byte[16]
+     * @return uniqId md5 byte[16]
      */
     public byte[] getUniqIDHash() {
     	return hash(getUniqID());
@@ -145,7 +166,7 @@ public class UniqId {
 	/**
 	 * 将一个字节数组转化为可见的字符串
 	 * @param bt
-	 * @return
+	 * @return 每个字节两位，如f1d2
 	 */
 	public String bytes2string(byte[] bt) {
 		int    l = bt.length;
