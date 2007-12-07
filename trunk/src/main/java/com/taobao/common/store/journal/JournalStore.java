@@ -1,5 +1,21 @@
-/**
- * 
+/*
+ *  Licensed to the Apache Software Foundation (ASF) under one
+ *  or more contributor license agreements.  See the NOTICE file
+ *  distributed with this work for additional information
+ *  regarding copyright ownership.  The ASF licenses this file
+ *  to you under the Apache License, Version 2.0 (the
+ *  "License"); you may not use this file except in compliance
+ *  with the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ *
  */
 package com.taobao.common.store.journal;
 
@@ -17,23 +33,25 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.log4j.Logger;
 
-import com.taobao.common.store.BytesKey;
 import com.taobao.common.store.Store;
+import com.taobao.common.store.util.BytesKey;
 import com.taobao.common.store.util.Util;
 
 /**
- * key必须是16字节
- * 1、数据文件和日志文件在一起，不记录索引文件
- * 	 name.1 name.1.log
- * 2、data为真正的数据，顺序存放，使用引用计数
- * 3、log为操作+key+偏移量
- * 4、添加数据时，先添加name.1，获得offset和length，然后记录日志，增加引用计数，然后加入或更新内存索引
- * 5、删除数据时，记录日志，删除内存索引，减少文件计数，判断大小是否满足大小了，并且无引用了，就删除数据文件和日志文件
- * 6、获取数据时，直接从内存索引获得数据偏移量
- * 7、更新数据时，调用添加
- * 8、启动时，遍历每一个log文件，通过日志的操作恢复内存索引
+ * <b>一个通过日志文件实现的key/value对的存储</b>
  * 
- * @author dogun
+ * key必须是16字节 <br />
+ * 1、数据文件和日志文件在一起，不记录索引文件<br />
+ * 	 name.1 name.1.log<br />
+ * 2、data为真正的数据，顺序存放，使用引用计数<br />
+ * 3、log为操作+key+偏移量<br />
+ * 4、添加数据时，先添加name.1，获得offset和length，然后记录日志，增加引用计数，然后加入或更新内存索引<br />
+ * 5、删除数据时，记录日志，删除内存索引，减少文件计数，判断大小是否满足大小了，并且无引用了，就删除数据文件和日志文件<br />
+ * 6、获取数据时，直接从内存索引获得数据偏移量<br />
+ * 7、更新数据时，调用添加<br />
+ * 8、启动时，遍历每一个log文件，通过日志的操作恢复内存索引<br />
+ * 
+ * @author dogun (yuexuqiang at gmail.com)
  */
 public class JournalStore implements Store, JournalStoreMBean {
 	static Logger log = Logger.getLogger(JournalStore.class);
@@ -53,6 +71,12 @@ public class JournalStore implements Store, JournalStoreMBean {
 	
 	private ReentrantLock addLock = new ReentrantLock();
 	
+	/**
+	 * 默认构造函数，会在path下使用name作为名字生成数据文件
+	 * @param path
+	 * @param name
+	 * @throws IOException
+	 */
 	public JournalStore(String path, String name) throws IOException {
 		Util.registMBean(this, name);
 		this.path = path;
@@ -70,6 +94,7 @@ public class JournalStore implements Store, JournalStoreMBean {
 			addLock.unlock();
 		}
 		
+		//当应用被关闭的时候,如果没有关闭文件,关闭之.对某些操作系统有用
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
 				try {
@@ -96,6 +121,7 @@ public class JournalStore implements Store, JournalStoreMBean {
 	}
 
 	/**
+	 * 内部添加数据
 	 * @param key
 	 * @param data
 	 * @throws IOException
@@ -187,8 +213,9 @@ public class JournalStore implements Store, JournalStoreMBean {
 	}
 
 	/**
+	 * 内部删除
 	 * @param key
-	 * @return
+	 * @return 是否删除了数据
 	 * @throws IOException
 	 */
 	private boolean innerRemove(byte[] key) throws IOException {
@@ -226,15 +253,17 @@ public class JournalStore implements Store, JournalStoreMBean {
 	}
 	
 	/**
+	 * 检查参数是否合法
 	 * @param key
 	 * @param data
 	 */
 	private void checkParam(byte[] key, byte[] data) {
-		if (null == key || null == data) throw new NullPointerException("key and data can't be null");
+		if (null == key || null == data) throw new NullPointerException("key/data can't be null");
 		if (key.length != 16) throw new IllegalArgumentException("key.length must be 16");
 	}
 	
 	/**
+	 * 生成一个新的数据文件
 	 * @throws FileNotFoundException
 	 */
 	private void newDataFile()
@@ -247,6 +276,10 @@ public class JournalStore implements Store, JournalStoreMBean {
 		log.info("生成新文件：" + this.dataFile);
 	}
 
+	/**
+	 * 类初始化的时候，需要遍历所有的日志文件，恢复内存的索引
+	 * @throws IOException
+	 */
 	private void initLoad() throws IOException {
 		log.warn("开始恢复数据");
 		final String nm = name;
@@ -397,6 +430,9 @@ public class JournalStore implements Store, JournalStoreMBean {
 		return indexs.toString();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.taobao.common.store.Store#close()
+	 */
 	public void close() throws IOException {
 		for (DataFile df : this.dataFiles.values()) {
 			try {
@@ -418,6 +454,9 @@ public class JournalStore implements Store, JournalStoreMBean {
 		this.logFile = null;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.taobao.common.store.journal.JournalStoreMBean#getSize()
+	 */
 	public long getSize() throws IOException {
 		return size();
 	}
