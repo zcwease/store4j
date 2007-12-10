@@ -43,7 +43,7 @@ public class JournalStoreTest {
 
     @Before
     public void setUp() throws Exception {
-        String path = "tmp\\notify-store-test\\";
+        String path = "tmp" + File.pathSeparator + "notify-store-test";
         File dir = new File(path);
         if (!dir.exists() && !dir.mkdirs()) {
             throw new IllegalStateException("can't make dir " + dir);
@@ -105,7 +105,7 @@ public class JournalStoreTest {
         }
         s = System.currentTimeMillis() - s;
         System.out.println("add " + msg.getBytes().length + " bytes " + num
-                + "times waste " + s + "ms, average " + s * 1.0d / num);
+                + " times waste " + s + "ms, average " + s * 1.0d / num);
         assertEquals(num, store.size());
 
         //load read
@@ -114,8 +114,8 @@ public class JournalStoreTest {
             this.store.get(getId(k, k));
         }
         s = System.currentTimeMillis() - s;
-        System.out.println("get " + num + " times waste " + s + "ms, average "
-                + s * 1.0d / num);
+        System.out.println("get " + msg.getBytes().length + " bytes " + num
+                + " times waste " + s + "ms, average " + s * 1.0d / num);
 
         //load remove
         s = System.currentTimeMillis();
@@ -123,7 +123,7 @@ public class JournalStoreTest {
             this.store.remove(getId(k, k));
         }
         s = System.currentTimeMillis() - s;
-        System.out.println("remove " + num + "times waste " + s
+        System.out.println("remove " + num + " times waste " + s
                 + "ms, average " + s * 1.0d / num);
         assertEquals(0, store.size());
     }
