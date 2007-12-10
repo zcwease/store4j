@@ -34,9 +34,9 @@ import com.taobao.common.store.journal.JournalStore;
 import com.taobao.common.store.util.UniqId;
 
 /**
- * @author xalinx at gmail dot com
+ * @author dogun (yuexuqiang at gmail.com)
+ * @author lin wang(xalinx at gmail dot com)
  * @date 2007-12-10
- *
  */
 public class JournalStoreTest {
     JournalStore store = null;
@@ -87,8 +87,9 @@ public class JournalStoreTest {
     }
 
     @Test
-    public void testAdd() throws Exception {
+    public void testLoadAddReadRemove() throws Exception {
         int num = 100000;
+        //load add
         long s = System.currentTimeMillis();
         for (int k = 0; k < num; k++) {
             this.store.add(getId(k, k), getMsg().getBytes());
@@ -97,6 +98,14 @@ public class JournalStoreTest {
         System.out.println("add " + num + " waste " + s + "ms, average " + s
                 * 1.0d / num);
         assertEquals(num, store.size());
+
+        //load read
+        s = System.currentTimeMillis();
+        for (int k = 0; k < num; k++) {
+            this.store.get(getId(k, k));
+        }
+        System.out.println("get " + num + " waste " + s + "ms, average " + s
+                * 1.0d / num);
 
         //load remove
         s = System.currentTimeMillis();
@@ -110,23 +119,24 @@ public class JournalStoreTest {
     }
 
     @Test
-    public void testLoad9() throws Exception {
-        load(8, 1000);
+    public void testLoadHeavy() throws Exception {
+        load(8, 2000, 5);
     }
 
     @Test
-    public void testLoad1() throws Exception {
-        load(2, 1000);
+    public void testLoadMin() throws Exception {
+        load(2, 2000, 5);
     }
 
-    public void load(int ThreadNum, int totalPerThread) throws Exception {
+    public void load(int ThreadNum, int totalPerThread, long meantime)
+            throws Exception {
         MsgCreator[] mcs = new MsgCreator[ThreadNum];
         MsgRemover[] mrs = new MsgRemover[mcs.length];
         for (int i = 0; i < mcs.length; i++) {
-            MsgCreator mc = new MsgCreator(i, totalPerThread);
+            MsgCreator mc = new MsgCreator(i, totalPerThread, meantime);
             mcs[i] = mc;
             mc.start();
-            MsgRemover mr = new MsgRemover(i, totalPerThread);
+            MsgRemover mr = new MsgRemover(i, totalPerThread, meantime);
             mrs[i] = mr;
             mr.start();
         }
@@ -172,23 +182,26 @@ public class JournalStoreTest {
     private class MsgCreator extends Thread {
         int id;
 
-        int total;
+        int totalPerThread;
 
         long timeTotal;
 
-        MsgCreator(int id, int total) {
+        long meantime;
+
+        MsgCreator(int id, int totalPerThread, long meantime) {
             this.id = id;
-            this.total = total;
+            this.totalPerThread = totalPerThread;
+            this.meantime = meantime;
         }
 
         public void run() {
-            for (int k = 0; k < total; k++) {
+            for (int k = 0; k < totalPerThread; k++) {
                 try {
+                    Thread.sleep(meantime);
                     long start = System.currentTimeMillis();
                     store.add(JournalStoreTest.getId(id, k), getMsg()
                             .getBytes());
                     timeTotal += System.currentTimeMillis() - start;
-                    Thread.sleep(10);
                 } catch (Exception e) {
                     throw new IllegalStateException(e);
                 }
@@ -199,19 +212,24 @@ public class JournalStoreTest {
     private class MsgRemover extends Thread {
         int id;
 
-        int total;
+        int totalPerThread;
 
         long timeTotal;
 
-        MsgRemover(int id, int total) {
+        long meantime;
+
+        MsgRemover(int id, int totalPerThread, long meantime) {
             this.id = id;
-            this.total = total;
+            this.totalPerThread = totalPerThread;
+            this.meantime = meantime;
         }
 
         public void run() {
-            for (int k = 0; k < total;) {
+            for (int k = 0; k < totalPerThread;) {
                 try {
-                    if (store.get(JournalStoreTest.getId(id, k)) == null) {
+                    Thread.sleep(meantime);
+                    byte[] read = store.get(JournalStoreTest.getId(id, k));
+                    if (read == null) {
                         continue;
                     }
                     long start = System.currentTimeMillis();
@@ -222,7 +240,6 @@ public class JournalStoreTest {
                         throw new IllegalStateException();
                     }
                     k++;
-                    Thread.sleep(10);
                 } catch (Exception e) {
                     throw new IllegalStateException(e);
                 }
