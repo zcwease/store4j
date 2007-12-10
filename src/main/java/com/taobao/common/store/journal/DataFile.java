@@ -27,7 +27,7 @@ import java.nio.channels.FileChannel;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 风中了一个数据文件
+ * 代表了一个数据文件
  * 
  * @author dogun (yuexuqiang at gmail.com)
  */
