@@ -31,7 +31,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.log4j.Logger;
 
 /**
- * ¿ÉÒÔÉú³ÉÎ¨Ò»µÄID£¬16¸ö×Ö½Ú£¬128Î»¡£Í¬Ê±Ìá¹©ÁËÒ»Ğ©¹¤¾ß·½·¨¡£
+ * å¯ä»¥ç”Ÿæˆå”¯ä¸€çš„IDï¼Œ16ä¸ªå­—èŠ‚ï¼Œ128ä½ã€‚åŒæ—¶æä¾›äº†ä¸€äº›å·¥å…·æ–¹æ³•ã€‚
  * 
  * @author huangshang (yuexuqiang at gmail.com)
  *
@@ -77,7 +77,7 @@ public class UniqId {
     }
 
     /**
-     * »ñÈ¡UniqIDÊµÀı
+     * è·å–UniqIDå®ä¾‹
      * @return UniqId
      */
     public static UniqId getInstance() {
@@ -85,15 +85,15 @@ public class UniqId {
     }
     
     /**
-     * »ñµÃ²»»áÖØ¸´µÄºÁÃëÊı
-     * @return ²»»áÖØ¸´µÄÊ±¼ä
+     * è·å¾—ä¸ä¼šé‡å¤çš„æ¯«ç§’æ•°
+     * @return ä¸ä¼šé‡å¤çš„æ—¶é—´
      */
     public long getUniqTime() {
     	return timer.getCurrentTime();
     }
 
     /**
-     * »ñµÃUniqId
+     * è·å¾—UniqId
      * @return uniqTime-randomNum-hostAddr-threadId
      */
     public String getUniqID() {
@@ -120,7 +120,7 @@ public class UniqId {
     }
 
     /**
-     * »ñÈ¡MD5Ö®ºóµÄuniqId string
+     * è·å–MD5ä¹‹åçš„uniqId string
      * @return uniqId md5 string
      */
     public String getUniqIDHashString() {
@@ -128,7 +128,7 @@ public class UniqId {
     }
     
     /**
-     * »ñÈ¡MD5Ö®ºóµÄuniqId
+     * è·å–MD5ä¹‹åçš„uniqId
      * @return uniqId md5 byte[16]
      */
     public byte[] getUniqIDHash() {
@@ -136,7 +136,7 @@ public class UniqId {
     }
     
     /**
-     * ¶Ô×Ö·û´®½øĞĞmd5
+     * å¯¹å­—ç¬¦ä¸²è¿›è¡Œmd5
      * @param str
      * @return md5 byte[16]
      */
@@ -154,7 +154,7 @@ public class UniqId {
     }
 
     /**
-     * ¶Ô×Ö·û´®½øĞĞmd5 string
+     * å¯¹å­—ç¬¦ä¸²è¿›è¡Œmd5 string
      * @param str
      * @return md5 string
      */
@@ -164,9 +164,9 @@ public class UniqId {
     }
 
 	/**
-	 * ½«Ò»¸ö×Ö½ÚÊı×é×ª»¯Îª¿É¼ûµÄ×Ö·û´®
+	 * å°†ä¸€ä¸ªå­—èŠ‚æ•°ç»„è½¬åŒ–ä¸ºå¯è§çš„å­—ç¬¦ä¸²
 	 * @param bt
-	 * @return Ã¿¸ö×Ö½ÚÁ½Î»£¬Èçf1d2
+	 * @return æ¯ä¸ªå­—èŠ‚ä¸¤ä½ï¼Œå¦‚f1d2
 	 */
 	public String bytes2string(byte[] bt) {
 		int    l = bt.length;
@@ -186,7 +186,7 @@ public class UniqId {
 	}
 
     /**
-     * ÊµÏÖ²»ÖØ¸´µÄÊ±¼ä
+     * å®ç°ä¸é‡å¤çš„æ—¶é—´
      * @author dogun
      */
     private class UniqTimer {

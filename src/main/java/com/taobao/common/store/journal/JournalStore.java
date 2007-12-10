@@ -38,18 +38,18 @@ import com.taobao.common.store.util.BytesKey;
 import com.taobao.common.store.util.Util;
 
 /**
- * <b>Ò»¸öÍ¨¹ýÈÕÖ¾ÎÄ¼þÊµÏÖµÄkey/value¶ÔµÄ´æ´¢</b>
+ * <b>ä¸€ä¸ªé€šè¿‡æ—¥å¿—æ–‡ä»¶å®žçŽ°çš„key/valueå¯¹çš„å­˜å‚¨</b>
  * 
- * key±ØÐëÊÇ16×Ö½Ú <br />
- * 1¡¢Êý¾ÝÎÄ¼þºÍÈÕÖ¾ÎÄ¼þÔÚÒ»Æð£¬²»¼ÇÂ¼Ë÷ÒýÎÄ¼þ<br />
+ * keyå¿…é¡»æ˜¯16å­—èŠ‚ <br />
+ * 1ã€æ•°æ®æ–‡ä»¶å’Œæ—¥å¿—æ–‡ä»¶åœ¨ä¸€èµ·ï¼Œä¸è®°å½•ç´¢å¼•æ–‡ä»¶<br />
  * 	 name.1 name.1.log<br />
- * 2¡¢dataÎªÕæÕýµÄÊý¾Ý£¬Ë³Ðò´æ·Å£¬Ê¹ÓÃÒýÓÃ¼ÆÊý<br />
- * 3¡¢logÎª²Ù×÷+key+Æ«ÒÆÁ¿<br />
- * 4¡¢Ìí¼ÓÊý¾ÝÊ±£¬ÏÈÌí¼Óname.1£¬»ñµÃoffsetºÍlength£¬È»ºó¼ÇÂ¼ÈÕÖ¾£¬Ôö¼ÓÒýÓÃ¼ÆÊý£¬È»ºó¼ÓÈë»ò¸üÐÂÄÚ´æË÷Òý<br />
- * 5¡¢É¾³ýÊý¾ÝÊ±£¬¼ÇÂ¼ÈÕÖ¾£¬É¾³ýÄÚ´æË÷Òý£¬¼õÉÙÎÄ¼þ¼ÆÊý£¬ÅÐ¶Ï´óÐ¡ÊÇ·ñÂú×ã´óÐ¡ÁË£¬²¢ÇÒÎÞÒýÓÃÁË£¬¾ÍÉ¾³ýÊý¾ÝÎÄ¼þºÍÈÕÖ¾ÎÄ¼þ<br />
- * 6¡¢»ñÈ¡Êý¾ÝÊ±£¬Ö±½Ó´ÓÄÚ´æË÷Òý»ñµÃÊý¾ÝÆ«ÒÆÁ¿<br />
- * 7¡¢¸üÐÂÊý¾ÝÊ±£¬µ÷ÓÃÌí¼Ó<br />
- * 8¡¢Æô¶¯Ê±£¬±éÀúÃ¿Ò»¸ölogÎÄ¼þ£¬Í¨¹ýÈÕÖ¾µÄ²Ù×÷»Ö¸´ÄÚ´æË÷Òý<br />
+ * 2ã€dataä¸ºçœŸæ­£çš„æ•°æ®ï¼Œé¡ºåºå­˜æ”¾ï¼Œä½¿ç”¨å¼•ç”¨è®¡æ•°<br />
+ * 3ã€logä¸ºæ“ä½œ+key+åç§»é‡<br />
+ * 4ã€æ·»åŠ æ•°æ®æ—¶ï¼Œå…ˆæ·»åŠ name.1ï¼ŒèŽ·å¾—offsetå’Œlengthï¼Œç„¶åŽè®°å½•æ—¥å¿—ï¼Œå¢žåŠ å¼•ç”¨è®¡æ•°ï¼Œç„¶åŽåŠ å…¥æˆ–æ›´æ–°å†…å­˜ç´¢å¼•<br />
+ * 5ã€åˆ é™¤æ•°æ®æ—¶ï¼Œè®°å½•æ—¥å¿—ï¼Œåˆ é™¤å†…å­˜ç´¢å¼•ï¼Œå‡å°‘æ–‡ä»¶è®¡æ•°ï¼Œåˆ¤æ–­å¤§å°æ˜¯å¦æ»¡è¶³å¤§å°äº†ï¼Œå¹¶ä¸”æ— å¼•ç”¨äº†ï¼Œå°±åˆ é™¤æ•°æ®æ–‡ä»¶å’Œæ—¥å¿—æ–‡ä»¶<br />
+ * 6ã€èŽ·å–æ•°æ®æ—¶ï¼Œç›´æŽ¥ä»Žå†…å­˜ç´¢å¼•èŽ·å¾—æ•°æ®åç§»é‡<br />
+ * 7ã€æ›´æ–°æ•°æ®æ—¶ï¼Œè°ƒç”¨æ·»åŠ <br />
+ * 8ã€å¯åŠ¨æ—¶ï¼ŒéåŽ†æ¯ä¸€ä¸ªlogæ–‡ä»¶ï¼Œé€šè¿‡æ—¥å¿—çš„æ“ä½œæ¢å¤å†…å­˜ç´¢å¼•<br />
  * 
  * @author dogun (yuexuqiang at gmail.com)
  */
@@ -72,7 +72,7 @@ public class JournalStore implements Store, JournalStoreMBean {
 	private ReentrantLock addLock = new ReentrantLock();
 	
 	/**
-	 * Ä¬ÈÏ¹¹Ôìº¯Êý£¬»áÔÚpathÏÂÊ¹ÓÃname×÷ÎªÃû×ÖÉú³ÉÊý¾ÝÎÄ¼þ
+	 * é»˜è®¤æž„é€ å‡½æ•°ï¼Œä¼šåœ¨pathä¸‹ä½¿ç”¨nameä½œä¸ºåå­—ç”Ÿæˆæ•°æ®æ–‡ä»¶
 	 * @param path
 	 * @param name
 	 * @throws IOException
@@ -85,16 +85,16 @@ public class JournalStore implements Store, JournalStoreMBean {
 		addLock.lock();
 		try {
 			initLoad();
-			//Èç¹ûµ±Ç°Ã»ÓÐ¿ÉÓÃÎÄ¼þ£¬Éú³É
+			//å¦‚æžœå½“å‰æ²¡æœ‰å¯ç”¨æ–‡ä»¶ï¼Œç”Ÿæˆ
 			if (null == this.dataFile || null == this.logFile) {
 				newDataFile();
 			}
-			//×¼±¸ºÃÁË
+			//å‡†å¤‡å¥½äº†
 		} finally {
 			addLock.unlock();
 		}
 		
-		//µ±Ó¦ÓÃ±»¹Ø±ÕµÄÊ±ºò,Èç¹ûÃ»ÓÐ¹Ø±ÕÎÄ¼þ,¹Ø±ÕÖ®.¶ÔÄ³Ð©²Ù×÷ÏµÍ³ÓÐÓÃ
+		//å½“åº”ç”¨è¢«å…³é—­çš„æ—¶å€™,å¦‚æžœæ²¡æœ‰å…³é—­æ–‡ä»¶,å…³é—­ä¹‹.å¯¹æŸäº›æ“ä½œç³»ç»Ÿæœ‰ç”¨
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
 				try {
@@ -110,7 +110,7 @@ public class JournalStore implements Store, JournalStoreMBean {
 	 * @see com.taobao.common.store.Store#add(byte[], byte[])
 	 */
 	public void add(byte[] key, byte[] data) throws IOException {
-		//ÏÈ¼ì²éÊÇ·ñÒÑ¾­´æÔÚ£¬Èç¹ûÒÑ¾­´æÔÚÅ×³öÒì³£ ÅÐ¶ÏÎÄ¼þÊÇ·ñÂúÁË£¬Ìí¼Óname.1£¬»ñµÃoffset£¬¼ÇÂ¼ÈÕÖ¾£¬Ôö¼ÓÒýÓÃ¼ÆÊý£¬¼ÓÈë»ò¸üÐÂÄÚ´æË÷Òý
+		//å…ˆæ£€æŸ¥æ˜¯å¦å·²ç»å­˜åœ¨ï¼Œå¦‚æžœå·²ç»å­˜åœ¨æŠ›å‡ºå¼‚å¸¸ åˆ¤æ–­æ–‡ä»¶æ˜¯å¦æ»¡äº†ï¼Œæ·»åŠ name.1ï¼ŒèŽ·å¾—offsetï¼Œè®°å½•æ—¥å¿—ï¼Œå¢žåŠ å¼•ç”¨è®¡æ•°ï¼ŒåŠ å…¥æˆ–æ›´æ–°å†…å­˜ç´¢å¼•
 		checkParam(key, data);
 		addLock.lock();
 		try {
@@ -121,7 +121,7 @@ public class JournalStore implements Store, JournalStoreMBean {
 	}
 
 	/**
-	 * ÄÚ²¿Ìí¼ÓÊý¾Ý
+	 * å†…éƒ¨æ·»åŠ æ•°æ®
 	 * @param key
 	 * @param data
 	 * @throws IOException
@@ -130,9 +130,9 @@ public class JournalStore implements Store, JournalStoreMBean {
 			throws IOException {
 		BytesKey k = new BytesKey(key);
 		if (this.indexs.containsKey(k)) {
-			throw new IOException("·¢ÏÖÖØ¸´µÄkey");
+			throw new IOException("å‘çŽ°é‡å¤çš„key");
 		}
-		if (this.dataFile.getLength() >= FILE_SIZE) { //ÂúÁË
+		if (this.dataFile.getLength() >= FILE_SIZE) { //æ»¡äº†
 			newDataFile();
 		}
 		
@@ -152,7 +152,7 @@ public class JournalStore implements Store, JournalStoreMBean {
 			df.increment();
 			this.indexs.put(k, op);
 		} else {
-			throw new IOException("ÎÄ¼þÔÚÊ¹ÓÃµÄÍ¬Ê±±»É¾³ýÁË:" + num);
+			throw new IOException("æ–‡ä»¶åœ¨ä½¿ç”¨çš„åŒæ—¶è¢«åˆ é™¤äº†:" + num);
 		}
 	}
 
@@ -169,7 +169,7 @@ public class JournalStore implements Store, JournalStoreMBean {
 				df.read(bf, op.offset);
 				data = bf.array();
 			} else {
-				log.warn("Êý¾ÝÎÄ¼þ¶ªÊ§£º" + op);
+				log.warn("æ•°æ®æ–‡ä»¶ä¸¢å¤±ï¼š" + op);
 			}
 		}
 		return data;
@@ -192,7 +192,7 @@ public class JournalStore implements Store, JournalStoreMBean {
 				return null;
 			}
 			public void remove() {
-				throw new UnsupportedOperationException("²»Ö§³ÖÉ¾³ý£¬ÇëÖ±½Óµ÷ÓÃstore.remove·½·¨");
+				throw new UnsupportedOperationException("ä¸æ”¯æŒåˆ é™¤ï¼Œè¯·ç›´æŽ¥è°ƒç”¨store.removeæ–¹æ³•");
 			}
 		};
 	}
@@ -201,7 +201,7 @@ public class JournalStore implements Store, JournalStoreMBean {
 	 * @see com.taobao.common.store.Store#remove(byte[])
 	 */
 	public boolean remove(byte[] key) throws IOException {
-		//»ñµÃ¼ÇÂ¼ÔÚÄÇ¸öÎÄ¼þ£¬¼ÇÂ¼ÈÕÖ¾£¬É¾³ýÄÚ´æË÷Òý£¬¼õÉÙÎÄ¼þ¼ÆÊý£¬ÅÐ¶Ï´óÐ¡ÊÇ·ñÂú×ã´óÐ¡ÁË£¬²¢ÇÒÎÞÒýÓÃÁË£¬¾ÍÉ¾³ýÊý¾ÝÎÄ¼þºÍÈÕÖ¾ÎÄ¼þ
+		//èŽ·å¾—è®°å½•åœ¨é‚£ä¸ªæ–‡ä»¶ï¼Œè®°å½•æ—¥å¿—ï¼Œåˆ é™¤å†…å­˜ç´¢å¼•ï¼Œå‡å°‘æ–‡ä»¶è®¡æ•°ï¼Œåˆ¤æ–­å¤§å°æ˜¯å¦æ»¡è¶³å¤§å°äº†ï¼Œå¹¶ä¸”æ— å¼•ç”¨äº†ï¼Œå°±åˆ é™¤æ•°æ®æ–‡ä»¶å’Œæ—¥å¿—æ–‡ä»¶
 		boolean ret = false;
 		addLock.lock();
 		try {
@@ -213,9 +213,9 @@ public class JournalStore implements Store, JournalStoreMBean {
 	}
 
 	/**
-	 * ÄÚ²¿É¾³ý
+	 * å†…éƒ¨åˆ é™¤
 	 * @param key
-	 * @return ÊÇ·ñÉ¾³ýÁËÊý¾Ý
+	 * @return æ˜¯å¦åˆ é™¤äº†æ•°æ®
 	 * @throws IOException
 	 */
 	private boolean innerRemove(byte[] key) throws IOException {
@@ -236,12 +236,12 @@ public class JournalStore implements Store, JournalStoreMBean {
 				df.decrement();
 				this.indexs.remove(k);
 				ret = true;
-				//ÅÐ¶ÏÊÇ·ñ¿ÉÒÔÉ¾ÁË
+				//åˆ¤æ–­æ˜¯å¦å¯ä»¥åˆ äº†
 				if (df.getLength() >= FILE_SIZE && df.isUnUsed()) {
-					if (this.dataFile == df) { //ÅÐ¶ÏÈç¹ûÊÇµ±Ç°ÎÄ¼þ£¬Éú³ÉÐÂµÄ
+					if (this.dataFile == df) { //åˆ¤æ–­å¦‚æžœæ˜¯å½“å‰æ–‡ä»¶ï¼Œç”Ÿæˆæ–°çš„
 						newDataFile();
 					}
-					log.info("É¾³ýÎÄ¼þ£º" + df);
+					log.info("åˆ é™¤æ–‡ä»¶ï¼š" + df);
 					this.dataFiles.remove(op.number);
 					this.logFiles.remove(op.number);
 					df.delete();
@@ -253,7 +253,7 @@ public class JournalStore implements Store, JournalStoreMBean {
 	}
 	
 	/**
-	 * ¼ì²é²ÎÊýÊÇ·ñºÏ·¨
+	 * æ£€æŸ¥å‚æ•°æ˜¯å¦åˆæ³•
 	 * @param key
 	 * @param data
 	 */
@@ -263,7 +263,7 @@ public class JournalStore implements Store, JournalStoreMBean {
 	}
 	
 	/**
-	 * Éú³ÉÒ»¸öÐÂµÄÊý¾ÝÎÄ¼þ
+	 * ç”Ÿæˆä¸€ä¸ªæ–°çš„æ•°æ®æ–‡ä»¶
 	 * @throws FileNotFoundException
 	 */
 	private void newDataFile()
@@ -273,38 +273,38 @@ public class JournalStore implements Store, JournalStoreMBean {
 		this.logFile = new LogFile(new File(path + "/" + name + "." + n + ".log"));
 		this.dataFiles.put(n, this.dataFile);
 		this.logFiles.put(n, this.logFile);
-		log.info("Éú³ÉÐÂÎÄ¼þ£º" + this.dataFile);
+		log.info("ç”Ÿæˆæ–°æ–‡ä»¶ï¼š" + this.dataFile);
 	}
 
 	/**
-	 * Àà³õÊ¼»¯µÄÊ±ºò£¬ÐèÒª±éÀúËùÓÐµÄÈÕÖ¾ÎÄ¼þ£¬»Ö¸´ÄÚ´æµÄË÷Òý
+	 * ç±»åˆå§‹åŒ–çš„æ—¶å€™ï¼Œéœ€è¦éåŽ†æ‰€æœ‰çš„æ—¥å¿—æ–‡ä»¶ï¼Œæ¢å¤å†…å­˜çš„ç´¢å¼•
 	 * @throws IOException
 	 */
 	private void initLoad() throws IOException {
-		log.warn("¿ªÊ¼»Ö¸´Êý¾Ý");
+		log.warn("å¼€å§‹æ¢å¤æ•°æ®");
 		final String nm = name;
 		File[] fs = new File(path).listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String n) {
 				return n.startsWith(nm) && !n.endsWith(".log");
 			}
 		});
-		log.warn("±éÀúÃ¿¸öÊý¾ÝÎÄ¼þ");
+		log.warn("éåŽ†æ¯ä¸ªæ•°æ®æ–‡ä»¶");
 		for (File f : fs) {
 			try {
-				log.warn("´¦Àí£º" + f.getAbsolutePath());
-				//»ñµÃnumber
+				log.warn("å¤„ç†ï¼š" + f.getAbsolutePath());
+				//èŽ·å¾—number
 				String fn = f.getName();
 				int n = Integer.parseInt(fn.substring(name.length() + 1));
 				if (n > this.number.get()) {
 					this.number.set(n);
 				}
-				//±£´æ±¾Êý¾ÝÎÄ¼þµÄË÷ÒýÐÅÏ¢
+				//ä¿å­˜æœ¬æ•°æ®æ–‡ä»¶çš„ç´¢å¼•ä¿¡æ¯
 				Map<BytesKey, OpItem> idx = new HashMap<BytesKey, OpItem>();
-				//Éú³ÉdataFileºÍlogFile
+				//ç”ŸæˆdataFileå’ŒlogFile
 				DataFile df = new DataFile(f);
 				LogFile lf = new LogFile(new File(f.getAbsolutePath() + ".log"));
 				long size = lf.getLength() / OpItem.LENGTH;
-				for (long i = 0; i < size; ++i) { //Ñ­»·Ã¿Ò»¸ö²Ù×÷
+				for (long i = 0; i < size; ++i) { //å¾ªçŽ¯æ¯ä¸€ä¸ªæ“ä½œ
 					ByteBuffer bf = ByteBuffer.wrap(new byte[OpItem.LENGTH]);
 					lf.read(bf, i * OpItem.LENGTH);
 					if (bf.hasRemaining()) {
@@ -314,41 +314,41 @@ public class JournalStore implements Store, JournalStoreMBean {
 					OpItem op = new OpItem();
 					op.parse(bf.array());
 					BytesKey key = new BytesKey(op.key);
-					if (op.op == OpItem.OP_ADD) { //Èç¹ûÊÇÌí¼ÓµÄ²Ù×÷£¬¼ÓÈëË÷Òý£¬Ôö¼ÓÒýÓÃ¼ÆÊý
+					if (op.op == OpItem.OP_ADD) { //å¦‚æžœæ˜¯æ·»åŠ çš„æ“ä½œï¼ŒåŠ å…¥ç´¢å¼•ï¼Œå¢žåŠ å¼•ç”¨è®¡æ•°
 						idx.put(key, op);
 						df.increment();
-					} else if (op.op == OpItem.OP_DEL) {//Èç¹ûÊÇÉ¾³ýµÄ²Ù×÷£¬Ë÷ÒýÈ¥³ý£¬¼õÉÙÒýÓÃ¼ÆÊý
+					} else if (op.op == OpItem.OP_DEL) {//å¦‚æžœæ˜¯åˆ é™¤çš„æ“ä½œï¼Œç´¢å¼•åŽ»é™¤ï¼Œå‡å°‘å¼•ç”¨è®¡æ•°
 						idx.remove(key);
 						df.decrement();
 					} else {
 						log.warn("unknow op:" + (int)op.op);
 					}
 				}
-				if (df.getLength() >= FILE_SIZE && df.isUnUsed()) { //Èç¹ûÕâ¸öÊý¾ÝÎÄ¼þÒÑ¾­´ïµ½Ö¸¶¨´óÐ¡£¬²¢ÇÒ²»ÔÙÊ¹ÓÃ£¬É¾³ý
+				if (df.getLength() >= FILE_SIZE && df.isUnUsed()) { //å¦‚æžœè¿™ä¸ªæ•°æ®æ–‡ä»¶å·²ç»è¾¾åˆ°æŒ‡å®šå¤§å°ï¼Œå¹¶ä¸”ä¸å†ä½¿ç”¨ï¼Œåˆ é™¤
 					df.delete();
 					lf.delete();
-					log.warn("²»ÓÃÁË£¬Ò²³¬¹ýÁË´óÐ¡£¬É¾³ý");
-				} else { //·ñÔò¼ÓÈëmap
+					log.warn("ä¸ç”¨äº†ï¼Œä¹Ÿè¶…è¿‡äº†å¤§å°ï¼Œåˆ é™¤");
+				} else { //å¦åˆ™åŠ å…¥map
 					this.dataFiles.put(n, df);
 					this.logFiles.put(n, lf);
-					if (df.getLength() < FILE_SIZE) { //Èç¹û´óÐ¡»¹Ã»³¬¹ýÖ¸¶¨´óÐ¡£¬µ±Ç°Êý¾ÝÎÄ¼þ¾ÍÊÇÕâ¸ö
+					if (df.getLength() < FILE_SIZE) { //å¦‚æžœå¤§å°è¿˜æ²¡è¶…è¿‡æŒ‡å®šå¤§å°ï¼Œå½“å‰æ•°æ®æ–‡ä»¶å°±æ˜¯è¿™ä¸ª
 						if (null != this.dataFile || null != this.logFile) {
-							throw new IOException("ÎªÊ²Ã´³¬¹ýÓÐÁ½¸öÊý¾ÝÎÄ¼þ»¹Ð¡ÓÚfileSizeÄØ£¿fileSize:" + FILE_SIZE);
+							throw new IOException("ä¸ºä»€ä¹ˆè¶…è¿‡æœ‰ä¸¤ä¸ªæ•°æ®æ–‡ä»¶è¿˜å°äºŽfileSizeå‘¢ï¼ŸfileSize:" + FILE_SIZE);
 						}
 						this.dataFile = df;
 						this.logFile = lf;
-						log.warn("ÊÇµ±Ç°ÎÄ¼þ");
+						log.warn("æ˜¯å½“å‰æ–‡ä»¶");
 					}
-					if (!df.isUnUsed()) { //Èç¹ûÓÐË÷Òý£¬¼ÓÈë×ÜË÷Òý 
+					if (!df.isUnUsed()) { //å¦‚æžœæœ‰ç´¢å¼•ï¼ŒåŠ å…¥æ€»ç´¢å¼• 
 						this.indexs.putAll(idx);
-						log.warn("»¹ÔÚÊ¹ÓÃ£¬·ÅÈëË÷Òý£¬referenceCount:" + df.getReferenceCount() + ", index:" + idx.size());
+						log.warn("è¿˜åœ¨ä½¿ç”¨ï¼Œæ”¾å…¥ç´¢å¼•ï¼ŒreferenceCount:" + df.getReferenceCount() + ", index:" + idx.size());
 					}
 				}
 			} catch (Exception e) {
 				log.error("load data file error:" + f, e);
 			}
 		}
-		log.warn("»Ö¸´Êý¾Ý£º" + this.size());
+		log.warn("æ¢å¤æ•°æ®ï¼š" + this.size());
 	}
 
 	/* (non-Javadoc)

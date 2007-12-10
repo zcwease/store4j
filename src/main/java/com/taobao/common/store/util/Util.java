@@ -21,14 +21,14 @@ package com.taobao.common.store.util;
 
 
 /**
- * store4jÊ¹ÓÃµÄutilÀà
+ * store4jä½¿ç”¨çš„utilç±»
  * 
  * @author yxq1871 (yuexuqiang at gmail.com)
  *
  */
 public class Util {
     /**
-     * ½«Ò»¸ö¶ÔÏó×¢²á¸øMBeanServer
+     * å°†ä¸€ä¸ªå¯¹è±¡æ³¨å†Œç»™MBeanServer
      * @param o
      */
     public static void registMBean(Object o, String name) {

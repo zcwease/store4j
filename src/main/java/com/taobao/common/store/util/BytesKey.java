@@ -22,9 +22,9 @@ package com.taobao.common.store.util;
 import java.io.Serializable;
 
 /**
- * ÓÉÓÚbyte[]×÷ÎªmapµÄkeyÊ±£¬»áÔì³ÉÃ¿´ÎµÄkey¶¼²»Ò»Ñù£¬ËùÒÔ±ØĞë·â×°Ò»ÏÂ¡£
+ * ç”±äºbyte[]ä½œä¸ºmapçš„keyæ—¶ï¼Œä¼šé€ æˆæ¯æ¬¡çš„keyéƒ½ä¸ä¸€æ ·ï¼Œæ‰€ä»¥å¿…é¡»å°è£…ä¸€ä¸‹ã€‚
  * <br />
- * ¸ÃÀà¾ÍÊÇ·â×°ÁËbyte[]
+ * è¯¥ç±»å°±æ˜¯å°è£…äº†byte[]
  * 
  * @author dogun (yuexuqiang at gmail.com)
  */
