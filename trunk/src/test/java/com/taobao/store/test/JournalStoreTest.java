@@ -87,16 +87,25 @@ public class JournalStoreTest {
     }
 
     @Test
-    public void testLoadAddReadRemove() throws Exception {
+    public void testLoadAddReadRemove10K() throws Exception {
+        loadAddReadRemove(getMsg10K());
+    }
+
+    @Test
+    public void testLoadAddReadRemove1K() throws Exception {
+        loadAddReadRemove(getMsg1K());
+    }
+
+    public void loadAddReadRemove(String msg) throws Exception {
         int num = 100000;
         //load add
         long s = System.currentTimeMillis();
         for (int k = 0; k < num; k++) {
-            this.store.add(getId(k, k), getMsg().getBytes());
+            this.store.add(getId(k, k), msg.getBytes());
         }
         s = System.currentTimeMillis() - s;
-        System.out.println("add " + num + " waste " + s + "ms, average " + s
-                * 1.0d / num);
+        System.out.println("add " + msg.getBytes().length + " bytes " + num
+                + "times waste " + s + "ms, average " + s * 1.0d / num);
         assertEquals(num, store.size());
 
         //load read
@@ -104,8 +113,9 @@ public class JournalStoreTest {
         for (int k = 0; k < num; k++) {
             this.store.get(getId(k, k));
         }
-        System.out.println("get " + num + " waste " + s + "ms, average " + s
-                * 1.0d / num);
+        s = System.currentTimeMillis() - s;
+        System.out.println("get " + num + " times waste " + s + "ms, average "
+                + s * 1.0d / num);
 
         //load remove
         s = System.currentTimeMillis();
@@ -113,8 +123,8 @@ public class JournalStoreTest {
             this.store.remove(getId(k, k));
         }
         s = System.currentTimeMillis() - s;
-        System.out.println("remove " + num + " waste " + s + "ms, average " + s
-                * 1.0d / num);
+        System.out.println("remove " + num + "times waste " + s
+                + "ms, average " + s * 1.0d / num);
         assertEquals(0, store.size());
     }
 
@@ -175,8 +185,14 @@ public class JournalStoreTest {
         return tmp;
     }
 
-    private String getMsg() {
-        return "The quick brown fox jumps over the lazy dog";
+    private static final byte[] MSG_BYTES = new byte[102400];
+
+    private String getMsg1K() {
+        return new String(MSG_BYTES, 0, 1024);
+    }
+
+    private String getMsg10K() {
+        return new String(MSG_BYTES, 0, 10240);
     }
 
     private class MsgCreator extends Thread {
@@ -199,7 +215,7 @@ public class JournalStoreTest {
                 try {
                     Thread.sleep(meantime);
                     long start = System.currentTimeMillis();
-                    store.add(JournalStoreTest.getId(id, k), getMsg()
+                    store.add(JournalStoreTest.getId(id, k), getMsg1K()
                             .getBytes());
                     timeTotal += System.currentTimeMillis() - start;
                 } catch (Exception e) {
