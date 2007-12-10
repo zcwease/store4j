@@ -43,7 +43,7 @@ public class JournalStoreTest {
 
     @Before
     public void setUp() throws Exception {
-        String path = "\\home\\admin\\tmp\\notify-store-test\\";
+        String path = "tmp\\notify-store-test\\";
         File dir = new File(path);
         if (!dir.exists() && !dir.mkdirs()) {
             throw new IllegalStateException("can't make dir " + dir);
