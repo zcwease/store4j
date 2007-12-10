@@ -23,7 +23,7 @@ import java.nio.ByteBuffer;
 
 
 /**
- * Ò»¸öÈÕÖ¾¼ÇÂ¼ ²Ù×÷+Êı¾İkey+Êı¾İÎÄ¼ş±àºÅ+Æ«ÒÆÁ¿+³¤¶È
+ * ä¸€ä¸ªæ—¥å¿—è®°å½• æ“ä½œ+æ•°æ®key+æ•°æ®æ–‡ä»¶ç¼–å·+åç§»é‡+é•¿åº¦
  * 
  * @author dogun (yuexuqiang at gmail.com)
  *
@@ -42,9 +42,9 @@ public class OpItem {
 	int length;
 	
 	/**
-	 * ½«Ò»¸ö²Ù×÷×ª»»³É×Ö½ÚÊı×é
+	 * å°†ä¸€ä¸ªæ“ä½œè½¬æ¢æˆå­—èŠ‚æ•°ç»„
 	 * 
-	 * @return ×Ö½ÚÊı×é
+	 * @return å­—èŠ‚æ•°ç»„
 	 */
 	byte[] toByte() {
 		byte[] data = new byte[LENGTH];
@@ -58,7 +58,7 @@ public class OpItem {
 	}
 
 	/**
-	 * Í¨¹ı×Ö½ÚÊı×é¹¹Ôì³ÉÒ»¸ö²Ù×÷ÈÕÖ¾
+	 * é€šè¿‡å­—èŠ‚æ•°ç»„æ„é€ æˆä¸€ä¸ªæ“ä½œæ—¥å¿—
 	 * @param data
 	 */
 	void parse(byte[] data) {

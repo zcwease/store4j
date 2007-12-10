@@ -27,7 +27,7 @@ import java.nio.channels.FileChannel;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * ·çÖĞÁËÒ»¸öÊı¾İÎÄ¼ş
+ * é£ä¸­äº†ä¸€ä¸ªæ•°æ®æ–‡ä»¶
  * 
  * @author dogun (yuexuqiang at gmail.com)
  */
@@ -37,21 +37,21 @@ class DataFile {
 	private FileChannel fc;
 
 	/**
-	 * ¹¹Ôìº¯Êı£¬»á´ò¿ªÖ¸¶¨µÄÎÄ¼ş£¬²¢ÇÒ½«Ö¸ÕëÖ¸ÏòÎÄ¼ş½áÎ²
+	 * æ„é€ å‡½æ•°ï¼Œä¼šæ‰“å¼€æŒ‡å®šçš„æ–‡ä»¶ï¼Œå¹¶ä¸”å°†æŒ‡é’ˆæŒ‡å‘æ–‡ä»¶ç»“å°¾
 	 * @param file
 	 * @throws IOException
 	 */
 	DataFile(File file) throws IOException {
 		this.file = file;
 		fc = new RandomAccessFile(file, "rw").getChannel();
-		//Ö¸ÕëÒÆµ½×îºó
+		//æŒ‡é’ˆç§»åˆ°æœ€å
 		fc.position(fc.size());
 	}
 
 	/**
-	 * »ñµÃÎÄ¼şµÄ´óĞ¡
+	 * è·å¾—æ–‡ä»¶çš„å¤§å°
 	 * 
-	 * @return ÎÄ¼şµÄ´óĞ¡
+	 * @return æ–‡ä»¶çš„å¤§å°
 	 * @throws IOException
 	 */
 	long getLength() throws IOException {
@@ -59,8 +59,8 @@ class DataFile {
 	}
 
 	/**
-	 * É¾³ıÎÄ¼ş
-	 * @return ÊÇ·ñÉ¾³ı³É¹¦
+	 * åˆ é™¤æ–‡ä»¶
+	 * @return æ˜¯å¦åˆ é™¤æˆåŠŸ
 	 * @throws IOException
 	 */
 	boolean delete() throws IOException {
@@ -69,7 +69,7 @@ class DataFile {
 	}
 
 	/**
-	 * Ç¿ÖÆ½«Êı¾İĞ´»ØÓ²ÅÌ
+	 * å¼ºåˆ¶å°†æ•°æ®å†™å›ç¡¬ç›˜
 	 * 
 	 * @throws IOException
 	 */
@@ -78,7 +78,7 @@ class DataFile {
 	}
 
 	/**
-	 * ¹Ø±ÕÎÄ¼ş
+	 * å…³é—­æ–‡ä»¶
 	 * 
 	 * @throws IOException
 	 */
@@ -87,9 +87,9 @@ class DataFile {
 	}
 	
 	/**
-	 * ´ÓÎÄ¼ş¶ÁÈ¡Êı¾İµ½bf£¬Ö±µ½¶ÁÂú»òÕß¶Áµ½ÎÄ¼ş½áÎ²¡£
+	 * ä»æ–‡ä»¶è¯»å–æ•°æ®åˆ°bfï¼Œç›´åˆ°è¯»æ»¡æˆ–è€…è¯»åˆ°æ–‡ä»¶ç»“å°¾ã€‚
 	 * <br />
-	 * ÎÄ¼şµÄÖ¸Õë»áÏòºóÒÆ¶¯bfµÄ´óĞ¡
+	 * æ–‡ä»¶çš„æŒ‡é’ˆä¼šå‘åç§»åŠ¨bfçš„å¤§å°
 	 * 
 	 * @param bf
 	 * @throws IOException
@@ -102,9 +102,9 @@ class DataFile {
 	}
 
 	/**
-	 * ´ÓÎÄ¼şµÄÖÆ¶¨Î»ÖÃ¶ÁÈ¡Êı¾İµ½bf£¬Ö±µ½¶ÁÂú»òÕß¶Áµ½ÎÄ¼ş½áÎ²¡£
+	 * ä»æ–‡ä»¶çš„åˆ¶å®šä½ç½®è¯»å–æ•°æ®åˆ°bfï¼Œç›´åˆ°è¯»æ»¡æˆ–è€…è¯»åˆ°æ–‡ä»¶ç»“å°¾ã€‚
 	 * <br />
-	 * ÎÄ¼şÖ¸Õë²»»áÒÆ¶¯
+	 * æ–‡ä»¶æŒ‡é’ˆä¸ä¼šç§»åŠ¨
 	 * 
 	 * @param bf
 	 * @param offset
@@ -120,9 +120,9 @@ class DataFile {
 	}
 
 	/**
-	 * Ğ´Èëbf³¤¶ÈµÄÊı¾İµ½ÎÄ¼ş£¬ÎÄ¼şÖ¸Õë»áÏòºóÒÆ¶¯
+	 * å†™å…¥bfé•¿åº¦çš„æ•°æ®åˆ°æ–‡ä»¶ï¼Œæ–‡ä»¶æŒ‡é’ˆä¼šå‘åç§»åŠ¨
 	 * @param bf
-	 * @return Ğ´ÈëºóµÄÎÄ¼şposition
+	 * @return å†™å…¥åçš„æ–‡ä»¶position
 	 * @throws IOException
 	 */
 	long write(ByteBuffer bf) throws IOException {
@@ -134,7 +134,7 @@ class DataFile {
 	}
 	
 	/**
-	 * ´ÓÖ¸¶¨Î»ÖÃĞ´Èëbf³¤¶ÈµÄÊı¾İµ½ÎÄ¼ş£¬ÎÄ¼şÖ¸Õë<b>²»»á</b>ÏòºóÒÆ¶¯
+	 * ä»æŒ‡å®šä½ç½®å†™å…¥bfé•¿åº¦çš„æ•°æ®åˆ°æ–‡ä»¶ï¼Œæ–‡ä»¶æŒ‡é’ˆ<b>ä¸ä¼š</b>å‘åç§»åŠ¨
 	 * @param offset
 	 * @param bf
 	 * @throws IOException
@@ -149,32 +149,32 @@ class DataFile {
 	}
 
 	/**
-	 * ¶ÔÎÄ¼şÔö¼ÓÒ»¸öÒıÓÃ¼ÆÊı
-	 * @return Ôö¼ÓºóµÄÒıÓÃ¼ÆÊı
+	 * å¯¹æ–‡ä»¶å¢åŠ ä¸€ä¸ªå¼•ç”¨è®¡æ•°
+	 * @return å¢åŠ åçš„å¼•ç”¨è®¡æ•°
 	 */
 	int increment() {
 		return referenceCount.incrementAndGet();
 	}
 
 	/**
-	 * ¶ÔÎÄ¼ş¼õÉÙÒ»¸öÒıÓÃ¼ÆÊı
-	 * @return ¼õÉÙºóµÄÒıÓÃ¼ÆÊı
+	 * å¯¹æ–‡ä»¶å‡å°‘ä¸€ä¸ªå¼•ç”¨è®¡æ•°
+	 * @return å‡å°‘åçš„å¼•ç”¨è®¡æ•°
 	 */
 	int decrement() {
 		return referenceCount.decrementAndGet();
 	}
 
 	/**
-	 * ÎÄ¼şÊÇ·ñ»¹ÔÚÊ¹ÓÃ£¨ÒıÓÃ¼ÆÊıÊÇ·ñÊÇ0ÁË£©
-	 * @return ÎÄ¼şÊÇ·ñ»¹ÔÚÊ¹ÓÃ
+	 * æ–‡ä»¶æ˜¯å¦è¿˜åœ¨ä½¿ç”¨ï¼ˆå¼•ç”¨è®¡æ•°æ˜¯å¦æ˜¯0äº†ï¼‰
+	 * @return æ–‡ä»¶æ˜¯å¦è¿˜åœ¨ä½¿ç”¨
 	 */
 	boolean isUnUsed() {
 		return getReferenceCount() <= 0;
 	}
 	
 	/**
-	 * »ñµÃÒıÓÃ¼ÆÊıµÄÖµ
-	 * @return ÒıÓÃ¼ÆÊıµÄÖµ
+	 * è·å¾—å¼•ç”¨è®¡æ•°çš„å€¼
+	 * @return å¼•ç”¨è®¡æ•°çš„å€¼
 	 */
 	int getReferenceCount() {
 		return this.referenceCount.get();

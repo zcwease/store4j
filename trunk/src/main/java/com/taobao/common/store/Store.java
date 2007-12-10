@@ -23,15 +23,15 @@ import java.io.IOException;
 import java.util.Iterator;
 
 /**
- * <b>´æ´¢µÄ½Ó¿Ú</b>
- * <p>¼òµ¥µÄ´æ´¢£¬¶Ôbyte[]ÀàĞÍµÄkey value¶ÔÖ§³Ö£¬
- * ½öÖ§³Öadd remove updateÈıÖÖÊı¾İ²Ù×÷</p>
+ * <b>å­˜å‚¨çš„æ¥å£</b>
+ * <p>ç®€å•çš„å­˜å‚¨ï¼Œå¯¹byte[]ç±»å‹çš„key valueå¯¹æ”¯æŒï¼Œ
+ * ä»…æ”¯æŒadd remove updateä¸‰ç§æ•°æ®æ“ä½œ</p>
  * 
  * @author dogun (yuexuqiang at gmail.com)
  */
 public interface Store {
 	/**
-	 * Ìí¼ÓÒ»¸öÊı¾İ
+	 * æ·»åŠ ä¸€ä¸ªæ•°æ®
 	 * @param key
 	 * @param data
 	 * @throws IOException
@@ -39,46 +39,46 @@ public interface Store {
 	void add(byte[] key, byte[] data) throws IOException;
 	
 	/**
-	 * É¾³ıÒ»¸öÊı¾İ
+	 * åˆ é™¤ä¸€ä¸ªæ•°æ®
 	 * @param key
-	 * @return ÊÇ·ñÉ¾³ıÁËÊı¾İ
+	 * @return æ˜¯å¦åˆ é™¤äº†æ•°æ®
 	 * @throws IOException
 	 */
 	boolean remove(byte[] key) throws IOException;
 	
 	/**
-	 * »ñÈ¡Ò»¸öÊı¾İ
+	 * è·å–ä¸€ä¸ªæ•°æ®
 	 * @param key
-	 * @return »ñµÃµÄÊı¾İ£¬Èç¹ûÃ»ÓĞ£¬·µ»Ønull
+	 * @return è·å¾—çš„æ•°æ®ï¼Œå¦‚æœæ²¡æœ‰ï¼Œè¿”å›null
 	 * @throws IOException
 	 */
 	byte[] get(byte[] key) throws IOException;
 	
 	/**
-	 * ¸üĞÂÒ»¸öÊı¾İ
+	 * æ›´æ–°ä¸€ä¸ªæ•°æ®
 	 * @param key
 	 * @param data
-	 * @return ÊÇ·ñÓĞ¸üĞÂµ½
+	 * @return æ˜¯å¦æœ‰æ›´æ–°åˆ°
 	 * @throws IOException
 	 */
 	boolean update(byte[] key, byte[] data) throws IOException;
 	
 	/**
-	 * »ñÈ¡Êı¾İ¸öÊı
-	 * @return Êı¾İ¸öÊı
+	 * è·å–æ•°æ®ä¸ªæ•°
+	 * @return æ•°æ®ä¸ªæ•°
 	 * @throws IOException
 	 */
 	int size() throws IOException;
 	
 	/**
-	 * ±éÀúkey
-	 * @return keyµÄ±éÀúÆ÷
+	 * éå†key
+	 * @return keyçš„éå†å™¨
 	 * @throws IOException
 	 */
 	Iterator<byte[]> iterator() throws IOException;
 	
 	/**
-	 * ¹Ø±Õ´æ´¢
+	 * å…³é—­å­˜å‚¨
 	 * @throws IOException
 	 */
 	void close() throws IOException;

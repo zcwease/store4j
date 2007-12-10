@@ -24,13 +24,13 @@ import java.io.IOException;
 
 
 /**
- * Ò»¸öÈÕÖ¾ÎÄ¼þ
+ * ä¸€ä¸ªæ—¥å¿—æ–‡ä»¶
  * 
  * @author dogun (yuexuqiang at gmail.com)
  */
 class LogFile extends DataFile {
 	/**
-	 * Ä¬ÈÏ¹¹Ôìº¯Êý
+	 * é»˜è®¤æž„é€ å‡½æ•°
 	 * @param file
 	 * @throws IOException
 	 */
