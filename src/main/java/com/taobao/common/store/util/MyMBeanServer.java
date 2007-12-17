@@ -56,11 +56,11 @@ public final class MyMBeanServer {
              hostName        = "localhost";
          }
     	try {
-    		boolean useJmx = Boolean.parseBoolean(System.getProperty("notify.useJMX", "false"));
+    		boolean useJmx = Boolean.parseBoolean(System.getProperty("store4j.useJMX", "false"));
     		if (useJmx) {
     			mbs = ManagementFactory.getPlatformMBeanServer();
-	    		int port = Integer.parseInt(System.getProperty("notify.rmi.port", "6669"));
-	    		String rmiName = System.getProperty("notify.rmi.name", "notifyServer");
+	    		int port = Integer.parseInt(System.getProperty("store4j.rmi.port", "6669"));
+	    		String rmiName = System.getProperty("store4j.rmi.name", "store4j");
 	    		Registry reg = null;
 	    		try {
 	    			reg = LocateRegistry.getRegistry(port);
