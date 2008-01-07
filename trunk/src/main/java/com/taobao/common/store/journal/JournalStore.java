@@ -119,7 +119,7 @@ public class JournalStore implements Store, JournalStoreMBean {
 	 * @throws IOException
 	 */
 	public JournalStore(String path, String name) throws IOException {
-		this(path, name, true);
+		this(path, name, false);
 	}
 
 	/* (non-Javadoc)
