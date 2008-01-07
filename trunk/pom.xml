@@ -6,7 +6,7 @@
 	<groupId>com.taobao.store4j</groupId>
 	<artifactId>store4j</artifactId>
 	<name>store4j</name>
-	<version>1.0</version>
+	<version>1.0.1</version>
 
 	<dependencies>
 		<dependency>
