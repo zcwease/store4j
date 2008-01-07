@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 class DataFile {
 	private File file;
 	private AtomicInteger referenceCount = new AtomicInteger(0);
-	private FileChannel fc;
+	protected FileChannel fc;
 
 	/**
 	 * 构造函数，会打开指定的文件，并且将指针指向文件结尾
@@ -42,8 +42,18 @@ class DataFile {
 	 * @throws IOException
 	 */
 	DataFile(File file) throws IOException {
+		this(file, false);
+	}
+	
+	
+	/**
+	 * 构造函数，会打开指定的文件，并且将指针指向文件结尾
+	 * @param file
+	 * @throws IOException
+	 */
+	DataFile(File file, boolean force) throws IOException {
 		this.file = file;
-		fc = new RandomAccessFile(file, "rw").getChannel();
+		fc = new RandomAccessFile(file, force?"rws":"rw").getChannel();
 		//指针移到最后
 		fc.position(fc.size());
 	}

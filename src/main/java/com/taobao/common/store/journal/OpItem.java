@@ -29,11 +29,11 @@ import java.nio.ByteBuffer;
  *
  */
 public class OpItem {
-	static final byte OP_ADD = 1;
-	static final byte OP_DEL = 2;
+	public static final byte OP_ADD = 1;
+	public static final byte OP_DEL = 2;
 	
-	static final int KEY_LENGTH = 16;
-	static final int LENGTH = KEY_LENGTH + 1 + 4 + 8 + 4;
+	public static final int KEY_LENGTH = 16;
+	public static final int LENGTH = KEY_LENGTH + 1 + 4 + 8 + 4;
 	
 	byte op;
 	byte[] key;

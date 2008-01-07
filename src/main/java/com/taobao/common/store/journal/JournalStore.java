@@ -24,8 +24,11 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -56,12 +59,13 @@ import com.taobao.common.store.util.Util;
 public class JournalStore implements Store, JournalStoreMBean {
 	static Logger log = Logger.getLogger(JournalStore.class);
 	
-	static final int FILE_SIZE = 1024 * 1024 * 50; //20M
+	public static final int FILE_SIZE = 1024 * 1024 * 50; //20M
 	
 	private String path;
 	private String name;
+	private boolean force;
 	
-	private Map<BytesKey, OpItem> indexs = new ConcurrentHashMap<BytesKey, OpItem>(10000, 0.8F, 40);
+	private Map<BytesKey, OpItem> indices = new ConcurrentHashMap<BytesKey, OpItem>(10000, 0.8F, 40);
 	private Map<Integer, DataFile> dataFiles = new ConcurrentHashMap<Integer, DataFile>();
 	private Map<Integer, LogFile> logFiles = new ConcurrentHashMap<Integer, LogFile>();
 	
@@ -75,12 +79,14 @@ public class JournalStore implements Store, JournalStoreMBean {
 	 * 默认构造函数，会在path下使用name作为名字生成数据文件
 	 * @param path
 	 * @param name
+	 * @param force
 	 * @throws IOException
 	 */
-	public JournalStore(String path, String name) throws IOException {
+	public JournalStore(String path, String name, boolean force) throws IOException {
 		Util.registMBean(this, name);
 		this.path = path;
 		this.name = name;
+		this.force = force;
 		
 		addLock.lock();
 		try {
@@ -104,6 +110,16 @@ public class JournalStore implements Store, JournalStoreMBean {
 				}
 			}
 		});
+	}	
+	
+	/**
+	 * 默认构造函数，会在path下使用name作为名字生成数据文件
+	 * @param path
+	 * @param name
+	 * @throws IOException
+	 */
+	public JournalStore(String path, String name) throws IOException {
+		this(path, name, true);
 	}
 
 	/* (non-Javadoc)
@@ -126,10 +142,10 @@ public class JournalStore implements Store, JournalStoreMBean {
 	 * @param data
 	 * @throws IOException
 	 */
-	private void innerAdd(byte[] key, byte[] data)
+	private OpItem innerAdd(byte[] key, byte[] data)
 			throws IOException {
 		BytesKey k = new BytesKey(key);
-		if (this.indexs.containsKey(k)) {
+		if (this.indices.containsKey(k)) {
 			throw new IOException("发现重复的key");
 		}
 		if (this.dataFile.getLength() >= FILE_SIZE) { //满了
@@ -150,7 +166,8 @@ public class JournalStore implements Store, JournalStoreMBean {
 			op.number = num;
 			lf.write(ByteBuffer.wrap(op.toByte()));
 			df.increment();
-			this.indexs.put(k, op);
+			this.indices.put(k, op);
+			return op;
 		} else {
 			throw new IOException("文件在使用的同时被删除了:" + num);
 		}
@@ -160,7 +177,7 @@ public class JournalStore implements Store, JournalStoreMBean {
 	 * @see com.taobao.common.store.Store#get(byte[])
 	 */
 	public byte[] get(byte[] key) throws IOException {
-		OpItem op = this.indexs.get(new BytesKey(key));
+		OpItem op = this.indices.get(new BytesKey(key));
 		byte[] data = null;
 		if (null != op) {
 			DataFile df = this.dataFiles.get(op.number);
@@ -179,7 +196,7 @@ public class JournalStore implements Store, JournalStoreMBean {
 	 * @see com.taobao.common.store.Store#iterator()
 	 */
 	public Iterator<byte[]> iterator() throws IOException {
-		final Iterator<BytesKey> it = this.indexs.keySet().iterator();
+		final Iterator<BytesKey> it = this.indices.keySet().iterator();
 		return new Iterator<byte[]>() {
 			public boolean hasNext() {
 				return it.hasNext();
@@ -221,35 +238,48 @@ public class JournalStore implements Store, JournalStoreMBean {
 	private boolean innerRemove(byte[] key) throws IOException {
 		boolean ret = false;
 		BytesKey k = new BytesKey(key);
-		OpItem op = this.indexs.get(k);
+		OpItem op = this.indices.get(k);
 		if (null != op) {
-			LogFile lf = this.logFiles.get(op.number);
-			DataFile df = this.dataFiles.get(op.number);
-			if (null != lf && null != df) {
-				OpItem o = new OpItem();
-				o.key = key;
-				o.length = op.length;
-				o.number = op.number;
-				o.offset = op.offset;
-				o.op = OpItem.OP_DEL;
-				lf.write(ByteBuffer.wrap(o.toByte()));
-				df.decrement();
-				this.indexs.remove(k);
-				ret = true;
-				//判断是否可以删了
-				if (df.getLength() >= FILE_SIZE && df.isUnUsed()) {
-					if (this.dataFile == df) { //判断如果是当前文件，生成新的
-						newDataFile();
-					}
-					log.info("删除文件：" + df);
-					this.dataFiles.remove(op.number);
-					this.logFiles.remove(op.number);
-					df.delete();
-					lf.delete();
-				}
+			ret = innerRemove(op);
+			if(ret){
+				this.indices.remove(k);
 			}
 		}
 		return ret;
+	}
+
+	/**
+	 * 根据OpItem对象，在日志文件中记录删除的操作日志，并且修改对应数据文件的引用计数.
+	 * @param op
+	 * @return
+	 * @throws IOException
+	 */
+	private boolean innerRemove(OpItem op) throws IOException {
+		DataFile df = this.dataFiles.get(op.number);
+		LogFile lf = this.logFiles.get(op.number);
+		if(null != df && null != lf){
+			OpItem o = new OpItem();
+			o.key = op.key;
+			o.length = op.length;
+			o.number = op.number;
+			o.offset = op.offset;
+			o.op = OpItem.OP_DEL;
+			lf.write(ByteBuffer.wrap(o.toByte()));
+			df.decrement();
+			//判断是否可以删了
+			if (df.getLength() >= FILE_SIZE && df.isUnUsed()) {
+				if (this.dataFile == df) { //判断如果是当前文件，生成新的
+					newDataFile();
+				}
+				log.info("删除文件：" + df);
+				this.dataFiles.remove(op.number);
+				this.logFiles.remove(op.number);
+				df.delete();
+				lf.delete();
+			}
+			return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -269,8 +299,8 @@ public class JournalStore implements Store, JournalStoreMBean {
 	private void newDataFile()
 			throws IOException {
 		int n = this.number.incrementAndGet();
-		this.dataFile = new DataFile(new File(path + "/" + name + "." + n));
-		this.logFile = new LogFile(new File(path + "/" + name + "." + n + ".log"));
+		this.dataFile = new DataFile(new File(path + File.separator + name + "." + n), force);
+		this.logFile = new LogFile(new File(path + File.separator + name + "." + n + ".log"), force);
 		this.dataFiles.put(n, this.dataFile);
 		this.logFiles.put(n, this.logFile);
 		log.info("生成新文件：" + this.dataFile);
@@ -282,71 +312,113 @@ public class JournalStore implements Store, JournalStoreMBean {
 	 */
 	private void initLoad() throws IOException {
 		log.warn("开始恢复数据");
-		final String nm = name;
-		File[] fs = new File(path).listFiles(new FilenameFilter() {
+		final String nm = name + ".";
+		File dir = new File(path);
+		File[] fs = dir.listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String n) {
 				return n.startsWith(nm) && !n.endsWith(".log");
 			}
 		});
 		log.warn("遍历每个数据文件");
+		List<Integer> indexList = new LinkedList<Integer>();
 		for (File f : fs) {
-			try {
-				log.warn("处理：" + f.getAbsolutePath());
-				//获得number
+			try{
 				String fn = f.getName();
-				int n = Integer.parseInt(fn.substring(name.length() + 1));
-				if (n > this.number.get()) {
-					this.number.set(n);
-				}
-				//保存本数据文件的索引信息
-				Map<BytesKey, OpItem> idx = new HashMap<BytesKey, OpItem>();
-				//生成dataFile和logFile
-				DataFile df = new DataFile(f);
-				LogFile lf = new LogFile(new File(f.getAbsolutePath() + ".log"));
-				long size = lf.getLength() / OpItem.LENGTH;
-				for (long i = 0; i < size; ++i) { //循环每一个操作
-					ByteBuffer bf = ByteBuffer.wrap(new byte[OpItem.LENGTH]);
-					lf.read(bf, i * OpItem.LENGTH);
-					if (bf.hasRemaining()) {
-						log.warn("log file error:" + lf + ", index:" + i);
-						continue;
-					}
-					OpItem op = new OpItem();
-					op.parse(bf.array());
-					BytesKey key = new BytesKey(op.key);
-					if (op.op == OpItem.OP_ADD) { //如果是添加的操作，加入索引，增加引用计数
-						idx.put(key, op);
-						df.increment();
-					} else if (op.op == OpItem.OP_DEL) {//如果是删除的操作，索引去除，减少引用计数
-						idx.remove(key);
-						df.decrement();
-					} else {
-						log.warn("unknow op:" + (int)op.op);
-					}
-				}
-				if (df.getLength() >= FILE_SIZE && df.isUnUsed()) { //如果这个数据文件已经达到指定大小，并且不再使用，删除
-					df.delete();
-					lf.delete();
-					log.warn("不用了，也超过了大小，删除");
-				} else { //否则加入map
-					this.dataFiles.put(n, df);
-					this.logFiles.put(n, lf);
-					if (df.getLength() < FILE_SIZE) { //如果大小还没超过指定大小，当前数据文件就是这个
-						if (null != this.dataFile || null != this.logFile) {
-							throw new IOException("为什么超过有两个数据文件还小于fileSize呢？fileSize:" + FILE_SIZE);
-						}
-						this.dataFile = df;
-						this.logFile = lf;
-						log.warn("是当前文件");
-					}
-					if (!df.isUnUsed()) { //如果有索引，加入总索引 
-						this.indexs.putAll(idx);
-						log.warn("还在使用，放入索引，referenceCount:" + df.getReferenceCount() + ", index:" + idx.size());
-					}
-				}
-			} catch (Exception e) {
-				log.error("load data file error:" + f, e);
+				int n = Integer.parseInt(fn.substring(nm.length()));
+				indexList.add(n);
 			}
+			catch(Exception e){
+				log.error("parse file index error" + f, e);
+			}
+		}
+		
+		Integer[] indices = indexList.toArray(new Integer[0]);
+		
+		//对文件顺序进行排序
+		Arrays.sort(indices);
+		
+		for (int n : indices) {
+			log.warn("处理index为" +n + "的文件");
+			//保存本数据文件的索引信息
+			Map<BytesKey, OpItem> idx = new HashMap<BytesKey, OpItem>();
+			//生成dataFile和logFile
+			File f = new File(dir, name + "." + n);
+			DataFile df = new DataFile(f, force);
+			LogFile lf = new LogFile(new File(f.getAbsolutePath() + ".log"), force);
+			long size = lf.getLength() / OpItem.LENGTH;
+			
+			for (int i = 0; i < size; ++i) { //循环每一个操作
+				ByteBuffer bf = ByteBuffer.wrap(new byte[OpItem.LENGTH]);
+				lf.read(bf, i * OpItem.LENGTH);
+				if (bf.hasRemaining()) {
+					log.warn("log file error:" + lf + ", index:" + i);
+					continue;
+				}
+				OpItem op = new OpItem();
+				op.parse(bf.array());
+				BytesKey key = new BytesKey(op.key);
+				switch(op.op){
+				case OpItem.OP_ADD: //如果是添加的操作，加入索引，增加引用计数
+					OpItem o = this.indices.get(key);
+					if(null != o){
+						//已经在之前添加过，那么必然是Update的时候，Remove的操作日志没有写入。
+						
+						//写入Remove日志
+						innerRemove(o);
+						
+						//从map中删除
+						this.indices.remove(key);
+					}
+					boolean addRefCount = true;
+					if(idx.get(key) != null){
+						//在同一个文件中add或者update过，那么只是更新内容，而不增加引用计数。
+						addRefCount = false;
+					}
+					
+					idx.put(key, op);
+
+					if(addRefCount){
+						df.increment();
+					}
+					break;
+
+				case OpItem.OP_DEL: //如果是删除的操作，索引去除，减少引用计数
+					idx.remove(key);
+					df.decrement();
+					break;
+										
+				default :
+					log.warn("unknow op:" + (int)op.op);
+					break;
+				}
+			}
+			if (df.getLength() >= FILE_SIZE && df.isUnUsed()) { //如果这个数据文件已经达到指定大小，并且不再使用，删除
+				df.delete();
+				lf.delete();
+				log.warn("不用了，也超过了大小，删除");
+			} else { //否则加入map
+				this.dataFiles.put(n, df);
+				this.logFiles.put(n, lf);
+				if (!df.isUnUsed()) { //如果有索引，加入总索引 
+					this.indices.putAll(idx);
+					log.warn("还在使用，放入索引，referenceCount:" + df.getReferenceCount() + ", index:" + idx.size());
+				}
+			}
+		}
+		//校验加载的文件，并设置当前文件
+		if(this.dataFiles.size() > 0){
+			indices = this.dataFiles.keySet().toArray(new Integer[0]);
+			Arrays.sort(indices);
+			for(int i=0; i < indices.length - 1; i++){
+				DataFile df = this.dataFiles.get(indices[i]);
+				if(df.isUnUsed() || df.getLength() < FILE_SIZE){
+					throw new IllegalStateException("非当前文件的状态是大于等于文件块长度，并且是used状态");
+				}
+			}
+			int n = indices[indices.length - 1];
+			this.number.set(n);
+			this.dataFile = this.dataFiles.get(n);
+			this.logFile = this.logFiles.get(n);
 		}
 		log.warn("恢复数据：" + this.size());
 	}
@@ -355,7 +427,7 @@ public class JournalStore implements Store, JournalStoreMBean {
 	 * @see com.taobao.common.store.Store#size()
 	 */
 	public int size() throws IOException {
-		return this.indexs.size();
+		return this.indices.size();
 	}
 
 	/* (non-Javadoc)
@@ -364,8 +436,20 @@ public class JournalStore implements Store, JournalStoreMBean {
 	public boolean update(byte[] key, byte[] data) throws IOException {
 		addLock.lock();
 		try {
-			if (innerRemove(key)) {
-				innerAdd(key, data);
+			//对于Update的消息，我们写入OpCode为Update的日志。
+			BytesKey k = new BytesKey(key);
+			OpItem op = this.indices.get(k);
+			if(null != op){
+				this.indices.remove(k);
+				OpItem o = innerAdd(key, data);
+				if(o.number != op.number){
+					//不在同一个文件上更新，才进行删除。
+					innerRemove(op);
+				}
+				else{
+					DataFile df = this.dataFiles.get(op.number);
+					df.decrement();
+				}
 				return true;
 			}
 		} finally {
@@ -427,7 +511,7 @@ public class JournalStore implements Store, JournalStoreMBean {
 	 * @see com.taobao.common.store.journal.JournalStoreMBean#viewIndexMap()
 	 */
 	public String viewIndexMap() {
-		return indexs.toString();
+		return indices.toString();
 	}
 
 	/* (non-Javadoc)

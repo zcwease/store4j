@@ -35,6 +35,23 @@ class LogFile extends DataFile {
 	 * @throws IOException
 	 */
 	LogFile(File file) throws IOException {
-		super(file);
+		this(file, false);
 	}
+	
+	/**
+	 * 构造函数
+	 * @param file
+	 * @param force
+	 * @throws IOException
+	 */
+	LogFile(File file, boolean force) throws IOException {
+		super(file, force);
+		//这个地方是为了防止操作日志文件的不完整。如果不完整，则丢弃最后不完整的数据。
+		long count = fc.size() / OpItem.LENGTH;
+		if(count * OpItem.LENGTH < fc.size()){
+			fc.truncate(count * OpItem.LENGTH);
+			fc.position(count * OpItem.LENGTH);
+		}
+	}
+	
 }
