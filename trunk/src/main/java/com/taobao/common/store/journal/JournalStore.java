@@ -180,7 +180,7 @@ public class JournalStore implements Store, JournalStoreMBean {
 		OpItem op = this.indices.get(new BytesKey(key));
 		byte[] data = null;
 		if (null != op) {
-			DataFile df = this.dataFiles.get(op.number);
+			DataFile df = this.dataFiles.get(new Integer(op.number));
 			if (null != df) {
 				ByteBuffer bf = ByteBuffer.wrap(new byte[(int)op.length]);
 				df.read(bf, op.offset);
@@ -255,8 +255,8 @@ public class JournalStore implements Store, JournalStoreMBean {
 	 * @throws IOException
 	 */
 	private boolean innerRemove(OpItem op) throws IOException {
-		DataFile df = this.dataFiles.get(op.number);
-		LogFile lf = this.logFiles.get(op.number);
+		DataFile df = this.dataFiles.get(new Integer(op.number));
+		LogFile lf = this.logFiles.get(new Integer(op.number));
 		if(null != df && null != lf){
 			OpItem o = new OpItem();
 			o.key = op.key;
@@ -272,8 +272,8 @@ public class JournalStore implements Store, JournalStoreMBean {
 					newDataFile();
 				}
 				log.info("删除文件：" + df);
-				this.dataFiles.remove(op.number);
-				this.logFiles.remove(op.number);
+				this.dataFiles.remove(new Integer(op.number));
+				this.logFiles.remove(new Integer(op.number));
 				df.delete();
 				lf.delete();
 			}
@@ -301,8 +301,8 @@ public class JournalStore implements Store, JournalStoreMBean {
 		int n = this.number.incrementAndGet();
 		this.dataFile = new DataFile(new File(path + File.separator + name + "." + n), force);
 		this.logFile = new LogFile(new File(path + File.separator + name + "." + n + ".log"), force);
-		this.dataFiles.put(n, this.dataFile);
-		this.logFiles.put(n, this.logFile);
+		this.dataFiles.put(new Integer(n), this.dataFile);
+		this.logFiles.put(new Integer(n), this.logFile);
 		log.info("生成新文件：" + this.dataFile);
 	}
 
@@ -325,19 +325,19 @@ public class JournalStore implements Store, JournalStoreMBean {
 			try{
 				String fn = f.getName();
 				int n = Integer.parseInt(fn.substring(nm.length()));
-				indexList.add(n);
+				indexList.add(new Integer(n));
 			}
 			catch(Exception e){
 				log.error("parse file index error" + f, e);
 			}
 		}
 		
-		Integer[] indices = indexList.toArray(new Integer[0]);
+		Integer[] indices = indexList.toArray(new Integer[indexList.size()]);
 		
 		//对文件顺序进行排序
 		Arrays.sort(indices);
 		
-		for (int n : indices) {
+		for (Integer n : indices) {
 			log.warn("处理index为" +n + "的文件");
 			//保存本数据文件的索引信息
 			Map<BytesKey, OpItem> idx = new HashMap<BytesKey, OpItem>();
@@ -415,8 +415,8 @@ public class JournalStore implements Store, JournalStoreMBean {
 					throw new IllegalStateException("非当前文件的状态是大于等于文件块长度，并且是used状态");
 				}
 			}
-			int n = indices[indices.length - 1];
-			this.number.set(n);
+			Integer n = indices[indices.length - 1];
+			this.number.set(n.intValue());
 			this.dataFile = this.dataFiles.get(n);
 			this.logFile = this.logFiles.get(n);
 		}
@@ -447,7 +447,7 @@ public class JournalStore implements Store, JournalStoreMBean {
 					innerRemove(op);
 				}
 				else{
-					DataFile df = this.dataFiles.get(op.number);
+					DataFile df = this.dataFiles.get(new Integer(op.number));
 					df.decrement();
 				}
 				return true;

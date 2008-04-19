@@ -26,8 +26,9 @@ import static org.junit.Assert.assertNull;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
 import java.util.Arrays;
+
+import junit.framework.Assert;
 
 import org.junit.After;
 import org.junit.Before;
@@ -107,8 +108,8 @@ public class JournalStoreTest {
     	lf.close();
     	store = new JournalStore(getPath(), getStoreName());
     	
-    	assertEquals(false, new File(filePrefix + "1").exists());
-    	assertEquals(false, new File(filePrefix + "1.log").exists());
+    	Assert.assertFalse(new File(filePrefix + "1").exists());
+    	Assert.assertFalse(new File(filePrefix + "1.log").exists());
     	
     }
 
@@ -147,8 +148,8 @@ public class JournalStoreTest {
     	}    	
     	
     	String filePrefix = getFilePrefix();
-    	assertEquals(false, new File(filePrefix + "1").exists());
-    	assertEquals(false, new File(filePrefix + "1.log").exists());
+    	Assert.assertFalse(new File(filePrefix + "1").exists());
+    	Assert.assertFalse(new File(filePrefix + "1.log").exists());
     }
     
     /**
@@ -185,8 +186,8 @@ public class JournalStoreTest {
     	}    	
     	
     	String filePrefix = getFilePrefix();
-    	assertEquals(false, new File(filePrefix + "1").exists());
-    	assertEquals(false, new File(filePrefix + "1.log").exists());
+    	Assert.assertFalse(new File(filePrefix + "1").exists());
+    	Assert.assertFalse(new File(filePrefix + "1.log").exists());
     }
     
     /**
@@ -219,8 +220,8 @@ public class JournalStoreTest {
     	}    	
     	
     	String filePrefix = getFilePrefix();
-    	assertEquals(false, new File(filePrefix + "1").exists());
-    	assertEquals(false, new File(filePrefix + "1.log").exists());
+    	Assert.assertFalse(new File(filePrefix + "1").exists());
+    	Assert.assertFalse(new File(filePrefix + "1.log").exists());
     }
     
     /**
@@ -256,8 +257,8 @@ public class JournalStoreTest {
     	}    	
     	
     	String filePrefix = getFilePrefix();
-    	assertEquals(false, new File(filePrefix + "1").exists());
-    	assertEquals(false, new File(filePrefix + "1.log").exists());
+    	Assert.assertFalse(new File(filePrefix + "1").exists());
+    	Assert.assertFalse(new File(filePrefix + "1.log").exists());
     }    
  
     /**
@@ -299,7 +300,7 @@ public class JournalStoreTest {
     	f.close();
     	
     	byte[] keyRead = Arrays.copyOf(opItem, 16);
-    	assertEquals(true, new BytesKey(key).equals(new BytesKey(keyRead)));
+    	Assert.assertTrue(new BytesKey(key).equals(new BytesKey(keyRead)));
     	assertEquals(OpItem.OP_DEL, opItem[16]);
     	assertEquals(0, opItem[17]);
     	assertEquals(0, opItem[18]);
@@ -308,8 +309,8 @@ public class JournalStoreTest {
     	   	
     	store.remove(key2);
     	
-    	assertEquals(false, new File(getFilePrefix() + "1").exists());
-    	assertEquals(false, new File(getFilePrefix() + "1.log").exists());
+    	Assert.assertFalse(new File(getFilePrefix() + "1").exists());
+    	Assert.assertFalse(new File(getFilePrefix() + "1.log").exists());
 
     	store.update(key, "LastUpdate".getBytes());
     	assertEquals(0, "LastUpdate".compareTo(new String(store.get(key))));
@@ -357,7 +358,7 @@ public class JournalStoreTest {
     	f.close();
     	
     	byte[] keyRead = Arrays.copyOf(opItem, 16);
-    	assertEquals(true, new BytesKey(key).equals(new BytesKey(keyRead)));
+    	Assert.assertTrue(new BytesKey(key).equals(new BytesKey(keyRead)));
     	assertEquals(OpItem.OP_DEL, opItem[16]);
     	assertEquals(0, opItem[17]);
     	assertEquals(0, opItem[18]);
@@ -366,8 +367,8 @@ public class JournalStoreTest {
     	   	
     	store.remove(key2);
     	
-    	assertEquals(false, new File(getFilePrefix() + "1").exists());
-    	assertEquals(false, new File(getFilePrefix() + "1.log").exists());
+    	Assert.assertFalse(new File(getFilePrefix() + "1").exists());
+    	Assert.assertFalse(new File(getFilePrefix() + "1.log").exists());
 
     	store.update(key, "LastUpdate".getBytes());
     	assertEquals(0, "LastUpdate".compareTo(new String(store.get(key))));
@@ -409,10 +410,10 @@ public class JournalStoreTest {
     		store.remove(k);
     	}
     	
-    	assertEquals(true, new File(getFilePrefix() + "1").exists());
-    	assertEquals(true, new File(getFilePrefix() + "1.log").exists());
-    	assertEquals(true, new File(getFilePrefix() + "2").exists());
-    	assertEquals(true, new File(getFilePrefix() + "2.log").exists());
+    	Assert.assertTrue(new File(getFilePrefix() + "1").exists());
+    	Assert.assertTrue(new File(getFilePrefix() + "1.log").exists());
+    	Assert.assertTrue(new File(getFilePrefix() + "2").exists());
+    	Assert.assertTrue(new File(getFilePrefix() + "2.log").exists());
     	
     	after();
     	
@@ -434,8 +435,8 @@ public class JournalStoreTest {
     	f.close();
 
     	store.remove(key2);
-    	assertEquals(false, new File(getFilePrefix() + "1").exists());
-    	assertEquals(false, new File(getFilePrefix() + "1.log").exists());
+    	Assert.assertFalse(new File(getFilePrefix() + "1").exists());
+    	Assert.assertFalse(new File(getFilePrefix() + "1.log").exists());
     	
     	for(int i = 0; i < count; i++){
     		byte[] data = new byte[messageLength];
@@ -445,8 +446,8 @@ public class JournalStoreTest {
     	}
 
     	store.remove(key);
-    	assertEquals(false, new File(getFilePrefix() + "2").exists());
-    	assertEquals(false, new File(getFilePrefix() + "2.log").exists());   	
+    	Assert.assertFalse(new File(getFilePrefix() + "2").exists());
+    	Assert.assertFalse(new File(getFilePrefix() + "2.log").exists());   	
     }
     
     
