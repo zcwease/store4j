@@ -35,6 +35,7 @@ class DataFile {
 	private File file;
 	private AtomicInteger referenceCount = new AtomicInteger(0);
 	protected FileChannel fc;
+	protected RandomAccessFile raf;
 
 	/**
 	 * 构造函数，会打开指定的文件，并且将指针指向文件结尾
@@ -53,7 +54,8 @@ class DataFile {
 	 */
 	DataFile(File file, boolean force) throws IOException {
 		this.file = file;
-		fc = new RandomAccessFile(file, force?"rws":"rw").getChannel();
+		raf = new RandomAccessFile(file, force?"rws":"rw");
+		fc = raf.getChannel();
 		//指针移到最后
 		fc.position(fc.size());
 	}
@@ -94,6 +96,7 @@ class DataFile {
 	 */
 	void close() throws IOException {
 		fc.close();
+		raf.close();
 	}
 	
 	/**
